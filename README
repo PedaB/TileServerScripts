@@ -4,6 +4,15 @@ OSM2World. Everything needed is contained in this repository
 and you're adviced to checkout the repository at once and link
 the subdirectories/files to the appropriate locations.
 
+== Requirements ==
+
+* webserver
+* python
+* rrdtools
+* mapsplit (http://wiki.openstreetmap.org/wiki/Mapsplit)
+* osm2world (http://osm2world.org/)
+* ...
+
 == Scripts ==
 
 There is a central configuration file (TODO) that will be used
