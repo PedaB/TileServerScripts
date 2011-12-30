@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>OSM2World Tiles</title>
+        <style type="text/css">
+
+    html, body, #map {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    #text {
+
+        position: absolute;
+        bottom: 1em;
+        right: 1em;
+        z-index: 20000;
+	
+	color: white;
+        background-color: #006;
+	opacity: 0.7;
+        padding: 0.2em 0.5em 0.2em 0.5em;
+
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+
+    }
+
+    #text:hover {
+	opacity: 1;
+    }
+
+div.olControlPanel {
+    top: 0px;
+    left: 50px;
+    position: absolute;
+}
+.olControlPanel div {
+    display: block;
+    width:  22px;
+    height: 22px;
+    border: thin solid black;
+    margin-top: 10px;
+    background-color: white
+
+}
+	</style>
+        <script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js"></script>
+        <script type="text/javascript">
+// <![CDATA[
+
+function init(){
+    var proj4326 = new OpenLayers.Projection("EPSG:4326");
+    var projmerc = new OpenLayers.Projection("EPSG:900913");
+
+    var lonlat = new OpenLayers.LonLat(13.45, 48.57);
+    var zoom = 13;
+
+    var map = new OpenLayers.Map("map", {
+			controls: [
+				new OpenLayers.Control.KeyboardDefaults(),
+				new OpenLayers.Control.Navigation(),
+				new OpenLayers.Control.LayerSwitcher(),
+				new OpenLayers.Control.PanZoomBar()
+            ],
+			maxExtent:
+                new OpenLayers.Bounds(-20037508.34,-20037508.34,
+                                       20037508.34, 20037508.34),
+			numZoomLevels: 19,
+            maxResolution: 156543,
+            units: 'm',
+            projection: projmerc,
+            displayProjection: proj4326,
+	    tileSize: new OpenLayers.Size(256,256)
+    } );
+    
+    var ogl_s_layer = new OpenLayers.Layer.XYZ('OSM2World OpenGL', 'tiles/ogltiles/${z}/${x}/${y}.png', {
+        /* sphericalMercator: true, */
+	transitionEffect: "resize"
+    });
+    
+    map.addLayers([ogl_s_layer]);
+
+<!--
+    var mapnikLayer = new OpenLayers.Layer.OSM();
+    map.addLayer(mapnikLayer);
+-->
+
+    lonlat.transform(proj4326, projmerc);
+    map.setCenter(lonlat, zoom);
+}
+
+// ]]>
+        </script>
+    </head>
+
+    <body onload="init()">
+
+        <div id="map"/>
+
+	<a href="http://osm2world.org">
+	<div id="text">
+           About this map
+        </div>
+	</a>
+
+    </body>
+</html>
