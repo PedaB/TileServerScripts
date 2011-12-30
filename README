@@ -1,0 +1,32 @@
+
+This is a set of scripts to operate a tileserver based on
+OSM2World. Everything needed is contained in this repository
+and you're adviced to checkout the repository at once and link
+the subdirectories/files to the appropriate locations.
+
+== Scripts ==
+
+There is a central configuration file (TODO) that will be used
+by all scripts.
+
+== Website ==
+
+The website consists of different parts:
+
+* the web directory containing the slippy map html pages
+* a directory containing the rendered tiles (3D tiles and label-tiles)
+* a set of php scripts for dynamic tile generation (labels-, date-tiles)
+  and some scripts to enable the used to manually rerender selected tiles
+
+== Crontab ==
+
+You should add at least the following lines to your cronjob
+
+15 2 * * * cd /dir/to/scripts && ./generate_tile.py --fetch-data
+0 2 * * * cd /dir/to/scripts && ./generate_tile.py --bzr-pull
+*/5 * * * * cd /dir/to/scripts && ./cron_script.py
+
+Once the scripts work you should add a "> /dev/null" redirection. Otherwise,
+on any output cron assumes an error and thus sends you an email immediatly
+which produces many mails ;)
+
