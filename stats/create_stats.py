@@ -10,7 +10,7 @@ RRD_FILE = RRD_DIR + "tiles.rrd"
 #
 # Doing the plot, taking a template for rrdtool graph
 #
-def plot_work(template, file, title, start, end, check=-1):
+def plot_work(template, file, title, start, end, extra="", check=-1):
 
     if check == -1:
         check = end
@@ -23,10 +23,11 @@ def plot_work(template, file, title, start, end, check=-1):
     if fd == -1 or fd.st_mtime < check:
         # TODO: add --lazy once this works
         command = "rrdtool graph %s --width 950 --height 250 " \
-                  "--start %d --end %d --title \"%s\" " + template + \
-                  " >/dev/null"
+                  "--start %d --end %d --title \"%s\" %s "
         
-        command = command % (file, start, end, title)
+        command = command % (file, start, end, title, extra)
+        command += template + " >/dev/null"
+
 	print(command)
 	os.system(command)
 
@@ -34,14 +35,42 @@ def plot_work(template, file, title, start, end, check=-1):
 #
 # Ploting average tile states
 # TODO: Add averaging and stuff like that..
-#
 def plot_avg(file, title, start, end, check=-1):
+    trend = int((end - start) / 2)
     lineDef = "DEF:ogl=" + RRD_FILE + ":ogltiles:LAST " \
               "DEF:queue=" + RRD_FILE + ":tilequeue:LAST " \
-              "LINE:ogl#0000FF:\"Number of rendered OGL tiles\" " \
-              "LINE:queue#FF0000:\"Number of tiles waiting in queue\" ";
+              "CDEF:trend=queue," + str(trend) + ",TREND " \
+              "CDEF:prev=PREV\(queue\) " \
+              "CDEF:r_tmp=prev,queue,- " \
+              "CDEF:rate=r_tmp,0,LT,PREV,r_tmp,IF " \
+              "CDEF:scaled=rate,50,* " \
+              "CDEF:srtrend=scaled," + str(trend/10) + ",TREND " \
+              "VDEF:q_min=queue,MINIMUM " \
+              "VDEF:q_avg=queue,AVERAGE " \
+              "VDEF:q_max=queue,MAXIMUM " \
+              "VDEF:r_min=rate,MINIMUM " \
+              "VDEF:r_avg=rate,AVERAGE " \
+              "VDEF:r_max=rate,MAXIMUM " \
+              "COMMENT:\"Queue size \t\t\t\t Render rate (per hour)\l\" " \
+              "AREA:ogl#CCCCFF: " \
+              "LINE:ogl#000040: " \
+              "AREA:queue#FF8888: " \
+              "LINE:queue#FF0000: " \
+              "LINE:trend#000000: " \
+              "LINE2:srtrend#000000: " \
+              "COMMENT:\"Minimum\: \" " \
+              "GPRINT:q_min:\"%6.0lf \t\t\t\t\" " \
+              "GPRINT:r_min:\"%6.0lf \l\" " \
+              "COMMENT:\"Average\: \" " \
+              "GPRINT:q_avg:\"%6.0lf \t\t\t\t\" " \
+              "GPRINT:r_avg:\"%6.0lf \l\" " \
+              "COMMENT:\"Maximum\: \" " \
+              "GPRINT:q_max:\"%6.0lf \t\t\t\t\" " \
+              "GPRINT:r_max:\"%6.0lf \l\" "
     
-    plot_work(lineDef, file, title, start, end, check)
+    extra = "  --right-axis 0,02:0 --right-axis-label \"render rate\" --right-axis-format \" %3.0lf \" "
+
+    plot_work(lineDef, file, title, start, end, extra, check)
 
 
 #
