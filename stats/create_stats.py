@@ -51,21 +51,20 @@ def plot_avg(file, title, start, end, check=-1):
               "VDEF:r_min=rate,MINIMUM " \
               "VDEF:r_avg=rate,AVERAGE " \
               "VDEF:r_max=rate,MAXIMUM " \
-              "COMMENT:\"Queue size \t\t\t\t Render rate (per hour)\l\" " \
-              "AREA:ogl#CCCCFF: " \
+              "AREA:ogl#CCCCFF:\"Queue size \t\t\t\t \" " \
               "LINE:ogl#000040: " \
               "AREA:queue#FF8888: " \
               "LINE:queue#FF0000: " \
               "LINE:trend#000000: " \
-              "LINE2:srtrend#000000: " \
+              "LINE1.5:srtrend#00CC00:\"Render rate (per hour)\l\":STACK " \
               "COMMENT:\"Minimum\: \" " \
-              "GPRINT:q_min:\"%6.0lf \t\t\t\t\" " \
+              "GPRINT:q_min:\"%6.0lf \t\t    \" " \
               "GPRINT:r_min:\"%6.0lf \l\" " \
               "COMMENT:\"Average\: \" " \
-              "GPRINT:q_avg:\"%6.0lf \t\t\t\t\" " \
+              "GPRINT:q_avg:\"%6.0lf \t\t    \" " \
               "GPRINT:r_avg:\"%6.0lf \l\" " \
               "COMMENT:\"Maximum\: \" " \
-              "GPRINT:q_max:\"%6.0lf \t\t\t\t\" " \
+              "GPRINT:q_max:\"%6.0lf \t\t    \" " \
               "GPRINT:r_max:\"%6.0lf \l\" "
     
     extra = "  --right-axis 0,02:0 --right-axis-label \"render rate\" --right-axis-format \" %3.0lf \" "
