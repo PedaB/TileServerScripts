@@ -26,7 +26,7 @@ def main():
 
     nextTile = files[0].strip();
 
-    movedTile = "/tmp/" + nextTile[:nextTile.rfind("/")-1];
+    movedTile = "/tmp/" + nextTile[nextTile.rfind("/"):];
     command = 'mv %s %s' % (nextTile, movedTile)
     #print(command)
     os.system(command)
