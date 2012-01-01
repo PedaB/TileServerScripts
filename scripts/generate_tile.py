@@ -3,9 +3,9 @@
 
 import os, math, getopt, sys
 
-GET_LIVE_DATA = True  # should we get data via the osm api? (caution, this might get you blocked!)
+GET_LIVE_DATA = False # should we get data via the osm api? (caution, this might get you blocked!)
 KEEP_DATA = True      # should we keep temp data? usefull for debugging
-HAVE_X = True         # do we have a X-server?
+HAVE_X = False        # do we have a X-server?
 SCALE_IMAGES = False  # do we also calculate scaled tiles?
 
 OSM2WORLD = "/home/xxx/osm/osm2w/osm2world/"
@@ -24,11 +24,11 @@ def tile2lat(y, zoom=ZOOM):
     return (180/math.pi*math.atan(0.5*(math.e**(n)-math.e**(-n))));
 
 def getfile(tileDir, outputDir, zoom, x, y):
-    file = tileDir + outputDir + '/' + str(zoom) + '/' + str(x) + '/' + str(y) + '.jpg';
+    file = tileDir + outputDir + '/' + str(zoom) + '/' + str(x) + '/' + str(y) + '.png';
     if os.path.exists(file):
         return file;
     else:
-        return tileDir + 'white.jpg';
+        return tileDir + 'white.png';
 
 
 """ generate the tiles for the different zooms """
@@ -50,7 +50,7 @@ def generateTiles(tileImg, x, y, tilesDir, outputDir):
         if zoom+5 == 13:
             destDir = tilesDir + outputDir + '/' + str(zoom+5) + '/' + str(x) + '/'
             os.system('mkdir -p ' + destDir);
-            os.rename(tmpFile, destDir + str(y) + '.jpg');
+            os.rename(tmpFile, destDir + str(y) + '.png');
             break;
 
         # handling for other zoom levels
@@ -60,10 +60,10 @@ def generateTiles(tileImg, x, y, tilesDir, outputDir):
             for ix in range(0, img_count):
                 destX = x * img_count + ix;
                 destDir = tilesDir + outputDir + '/' + str(zoom+5) + '/' + str(destX) + '/'
-                srcImg = 'resized_%d_%d-%d.jpg' % (x, y, i);
+                srcImg = 'resized_%d_%d-%d.png' % (x, y, i);
                 
                 os.system('mkdir -p ' + destDir);
-                os.rename(tmp + srcImg, destDir + str(destY) + '.jpg');
+                os.rename(tmp + srcImg, destDir + str(destY) + '.png');
                 
                 i = i+1;
         
@@ -90,7 +90,7 @@ def generateTiles(tileImg, x, y, tilesDir, outputDir):
         b4 = getfile(tilesDir, outputDir, zoom+6, 2*x+1, 2*y+1);
         outfile = tilesDir + outputDir + '/' + str(zoom+5) + '/' + str(x) + '/';
         os.system('mkdir -p ' + outfile);
-        outfile = outfile + str(y) + '.jpg';
+        outfile = outfile + str(y) + '.png';
 
         command = 'montage %s %s %s %s -tile 2x2 -geometry 128x128 %s' % (b1, b2, b3, b4, outfile);
         print('combining images: ' + command);
@@ -114,7 +114,7 @@ def getData():
     
     dir = os.getcwd()
     os.chdir(MAPSPLIT);
-    command = './mapsplit -v -t -d=/tmp/date.txt %s %s'
+    command = './mapsplit -v -t -b=0.1 -d=/tmp/date.txt %s %s'
     command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/tiles_');
     print ('Splitting bayern into tiles via:\n' + command)
     os.system(command)
@@ -206,11 +206,11 @@ def main():
     command = './osm2world.sh --config osm2world.config -i %s ' \
         ' -o %s %s --resolution 8192,8192 --oview.tiles %d,%d,%d --performancePrint --performanceTable %s '
     if not HAVE_X:
-	testCommand = 'ps aux|grep Xvfb|grep -v grep|wc -l';
-	if int(os.popen(testCommand).read()) == 0:
-		xvfbCommand = 'Xvfb -s 120 -screen 0 1024x768x24 &';
-		os.system(xvfbCommand);
-	command = 'DISPLAY=:0 ' + command;
+        testCommand = 'ps aux|grep Xvfb|grep -v grep|wc -l';
+        if int(os.popen(testCommand).read()) == 0:
+                xvfbCommand = 'Xvfb -screen 0 1024x768x24 &';
+                os.system(xvfbCommand);
+        command = 'DISPLAY=:0 ' + command;
     command = command % (osmfile, ogloutput, povfile, ZOOM, x, y, logfile);
     print("Running osm2world for pov and opengl via:\n" + command);
     os.system(command)
