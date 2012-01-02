@@ -34,17 +34,18 @@ def plot_work(template, file, title, start, end, extra="", check=-1):
 
 #
 # Ploting average tile states
-# TODO: Add averaging and stuff like that..
+# 
 def plot_avg(file, title, start, end, check=-1):
-    trend = int((end - start) / 2)
+    trend = int((end - start) / 3)
+    defstart = int(start - trend)
     lineDef = "DEF:ogl=" + RRD_FILE + ":ogltiles:LAST " \
-              "DEF:queue=" + RRD_FILE + ":tilequeue:LAST " \
+              "DEF:queue=" + RRD_FILE + ":tilequeue:LAST:start=" + str(defstart) + " " \
               "CDEF:trend=queue," + str(trend) + ",TREND " \
               "CDEF:prev=PREV\(queue\) " \
               "CDEF:r_tmp=prev,queue,- " \
               "CDEF:rate=r_tmp,0,LT,PREV,r_tmp,IF " \
               "CDEF:scaled=rate,50,* " \
-              "CDEF:srtrend=scaled," + str(trend/10) + ",TREND " \
+              "CDEF:srtrend=scaled,10800,TREND " \
               "VDEF:q_min=queue,MINIMUM " \
               "VDEF:q_avg=queue,AVERAGE " \
               "VDEF:q_max=queue,MAXIMUM " \
@@ -56,7 +57,7 @@ def plot_avg(file, title, start, end, check=-1):
               "AREA:queue#FF8888: " \
               "LINE:queue#FF0000: " \
               "LINE:trend#000000: " \
-              "LINE1.5:srtrend#00CC00:\"Render rate (per hour)\l\":STACK " \
+              "LINE1.5:srtrend#00CC00:\"Render rate (per hour)\l\" " \
               "COMMENT:\"Minimum\: \" " \
               "GPRINT:q_min:\"%6.0lf \t\t    \" " \
               "GPRINT:r_min:\"%6.0lf \l\" " \
