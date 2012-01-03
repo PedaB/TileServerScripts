@@ -1,7 +1,7 @@
 <? $x = $_GET["x"]; $y = $_GET["y"]; ?>
 
 <?
-$myfile = "output/render_tasks";
+$myfile = "/tmp/orders";
 $fh = fopen($myfile, 'a') or die("can't open file!");
 $toWrite = $x . " " . $y . "\n"; 
 fwrite($fh, $toWrite);
