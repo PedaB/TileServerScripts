@@ -45,7 +45,7 @@ def generateTiles(tileImg, x, y, tilesDir, outputDir):
     if NATIVE_TILEGEN:
         
         command = PNG_TILEGEN + "png_tilegen %s %s %d %d 18";
-        command = command % (tileImg, outputDir, x, y);
+        command = command % (tileImg, tilesDir + outputDir + '/', x, y);
         print(command);
         os.system(command);
         zoom = 8;
