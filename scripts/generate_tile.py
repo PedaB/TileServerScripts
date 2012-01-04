@@ -7,9 +7,11 @@ GET_LIVE_DATA = False # should we get data via the osm api? (caution, this might
 KEEP_DATA = True      # should we keep temp data? usefull for debugging
 HAVE_X = False        # do we have a X-server?
 SCALE_IMAGES = False  # do we also calculate scaled tiles?
+NATIVE_TILEGEN = True # use the c tilegenerator (instead of the convert based)
 
 OSM2WORLD = "/home/xxx/osm/osm2w/osm2world/"
 MAPSPLIT = "/home/xxx/workspace/mapsplit/"
+PNG_TILEGEN = "/home/xxx/osm/png_tilegen/"
 TILE_OUTPUT = "/tmp/geo/"
 ZOOM = 13
 
@@ -40,37 +42,47 @@ def generateTiles(tileImg, x, y, tilesDir, outputDir):
     img_size = 2**zoom;
     img_count = 2**(18-zoom);
 
-    while True:
+    if NATIVE_TILEGEN:
         
-        command = 'convert -resize %dx%d -crop 256x256 %s %s' % (img_size, img_size, tileImg, tmpFile)
+        command = PNG_TILEGEN + "png_tilegen %s %s %d %d 18";
+        command = command % (tileImg, outputDir, x, y);
         print(command);
         os.system(command);
+        zoom = 8;
 
-        # special handling in case of zoom 13
-        if zoom+5 == 13:
-            destDir = tilesDir + outputDir + '/' + str(zoom+5) + '/' + str(x) + '/'
-            os.system('mkdir -p ' + destDir);
-            os.rename(tmpFile, destDir + str(y) + '.png');
-            break;
+    else:
 
-        # handling for other zoom levels
-        i = 0;
-        for iy in range(0, img_count):
-            destY = y * img_count + iy;
-            for ix in range(0, img_count):
-                destX = x * img_count + ix;
-                destDir = tilesDir + outputDir + '/' + str(zoom+5) + '/' + str(destX) + '/'
-                srcImg = 'resized_%d_%d-%d.png' % (x, y, i);
-                
-                os.system('mkdir -p ' + destDir);
-                os.rename(tmp + srcImg, destDir + str(destY) + '.png');
-                
-                i = i+1;
+        while True:
         
-        # prepare for next zoom level run
-        img_size = img_size/2;
-        img_count = img_count/2;
-        zoom = zoom - 1;
+            command = 'convert -resize %dx%d -crop 256x256 %s %s' % (img_size, img_size, tileImg, tmpFile)
+            print(command);
+            os.system(command);
+
+            # special handling in case of zoom 13
+            if zoom+5 == 13:
+                destDir = tilesDir + outputDir + '/' + str(zoom+5) + '/' + str(x) + '/'
+                os.system('mkdir -p ' + destDir);
+                os.rename(tmpFile, destDir + str(y) + '.png');
+                break;
+
+            # handling for other zoom levels
+            i = 0;
+            for iy in range(0, img_count):
+                destY = y * img_count + iy;
+                for ix in range(0, img_count):
+                    destX = x * img_count + ix;
+                    destDir = tilesDir + outputDir + '/' + str(zoom+5) + '/' + str(destX) + '/'
+                    srcImg = 'resized_%d_%d-%d.png' % (x, y, i);
+                
+                    os.system('mkdir -p ' + destDir);
+                    os.rename(tmp + srcImg, destDir + str(destY) + '.png');
+                
+                    i = i+1;
+        
+            # prepare for next zoom level run
+            img_size = img_size/2;
+            img_count = img_count/2;
+            zoom = zoom - 1;
 
     # now we still need to make lower zoom levels by pasting images together...
     print(tilesDir);
