@@ -119,7 +119,7 @@ def usage():
 """ Fetch data from Geofabrik """
 def getData():
     osmdump = 'bayern.osm.pbf'
-    os.chdir('tmp/');
+    os.chdir(TILE_OUTPUT + '/dl/');
     command = 'wget -O %s "http://download.geofabrik.de/osm/europe/germany/bayern.osm.pbf"' % osmdump
     print ("Fetching bayern data from geofabrik via:\n" + command);
     os.system(command)
@@ -127,8 +127,13 @@ def getData():
     dir = os.getcwd()
     os.chdir(MAPSPLIT);
     command = './mapsplit -v -t -b=0.1 -d=/tmp/date.txt %s %s'
-    command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/tiles_');
+    command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_');
     print ('Splitting bayern into tiles via:\n' + command)
+    os.system(command)
+
+    # and finaly copy let's copy the files back to our working directory..
+    command = 'mv ' + TILE_OUTPUT + '/dl/tiles_* ' + TILE_OUTPUT;
+    print ('Copy tile-files to working dir via:\n' + command)
     os.system(command)
 
 
