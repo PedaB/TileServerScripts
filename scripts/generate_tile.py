@@ -124,8 +124,9 @@ def stop_rendering():
     os.system(command);
     command = 'ps aux|grep generate_tile.py|grep -v grep|wc -l';
     nrThreads = int(os.popen(command).read());
-    while (nrThreads > 0):
+    while (nrThreads > 1):
         time.sleep(10);
+        nrThreads = int(os.popen(command).read());
 
 """ restart the generation of tiles """
 def restart_rendering():

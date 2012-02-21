@@ -3,10 +3,14 @@
 
 import os, math, getopt, sys, re
 
+STOP_FILE = '/tmp/stop_tilegen'
 INPUT_DIR = '/tmp/geo/'
 MAX_THREADS = 4
 
 def main():
+
+    if os.path.exists(STOP_FILE):
+        sys.exit();
 
     command = 'ps aux|grep generate_tile.py|grep -v grep|wc -l'
     nrThreads = int(os.popen(command).read())
