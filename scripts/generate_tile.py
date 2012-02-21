@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os, math, getopt, sys
+import os, math, getopt, sys, time
 
 GET_LIVE_DATA = False # should we get data via the osm api? (caution, this might get you blocked!)
 KEEP_DATA = True      # should we keep temp data? usefull for debugging
@@ -9,6 +9,7 @@ HAVE_X = False        # do we have a X-server?
 SCALE_IMAGES = False  # do we also calculate scaled tiles?
 NATIVE_TILEGEN = True # use the c tilegenerator (instead of the convert based)
 
+STOP_FILE = '/tmp/stop_tilegen'
 OSM2WORLD = "/home/xxx/osm/osm2w/osm2world/"
 MAPSPLIT = "/home/xxx/workspace/mapsplit/"
 PNG_TILEGEN = "/home/xxx/osm/png_tilegen/"
@@ -112,12 +113,30 @@ def generateTiles(tileImg, x, y, tilesDir, outputDir):
             break;
 
 
-"""" Print usage informations """
+""" Print usage informations """
 def usage():
     print("generate_tile.py [-h|--help] [--fetch-data] [--bzr-pull] <tileX@zoom13> >tileY@zoom13>");
 
+
+""" stop generation of tiles and wait for all processes to finish """
+def stop_rendering():
+    command = 'touch ' + STOP_FILE;
+    os.system(command);
+    command = 'ps aux|grep generate_tile.py|grep -v grep|wc -l';
+    nrThreads = int(os.popen(command).read());
+    while (nrThreads > 0):
+        time.sleep(10);
+
+""" restart the generation of tiles """
+def restart_rendering():
+    command = 'rm ' + STOP_FILE;
+    os.system(command);
+
+
 """ Fetch data from Geofabrik """
 def getData():
+    stop_rendering();
+
     osmdump = 'bayern.osm.pbf'
     os.chdir(TILE_OUTPUT + '/dl/');
     command = 'wget -O %s "http://download.geofabrik.de/osm/europe/germany/bayern.osm.pbf"' % osmdump
@@ -135,6 +154,8 @@ def getData():
     command = 'mv ' + TILE_OUTPUT + '/dl/tiles_* ' + TILE_OUTPUT;
     print ('Copy tile-files to working dir via:\n' + command)
     os.system(command)
+    
+    restart_rendering();
 
 
 """ Pull osm2world data and compile them """

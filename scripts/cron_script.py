@@ -3,12 +3,16 @@
 
 import os, math, getopt, sys
 
+STOP_FILE = '/tmp/stop_tilegen'
 REMAINING_TILES = '/tmp/tiles_todo'
 WEBSITE_ORDERS = '/tmp/orders'
 MAX_THREADS = 4
 
 
 def main():
+
+    if os.path.exists(STOP_FILE):
+        sys.exit();
 
     command = 'ps aux|grep generate_tile.py|grep -v grep|wc -l';
     nrThreads = int(os.popen(command).read());
