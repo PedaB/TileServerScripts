@@ -40,7 +40,7 @@ def main():
     nextY = int(reg.group(2))
 
     logfile = '/tmp/run_%d_%d.log' % (nextX, nextY);
-    command = './generate_tile.py %d %d %s &> %s' % (nextX, nextY, movedTile, logfile);
+    command = './generate_tile.py %d %d %s > %s 2>&1 &' % (nextX, nextY, movedTile, logfile);
     #print(command)
     os.system(command)
     os.remove(movedTile)

@@ -46,7 +46,7 @@ def main():
         f.write(i);
 
     logfile = '/tmp/run_%d_%d.log' % (nextX, nextY);
-    command = './generate_tile.py %d %d &> %s &' % (nextX, nextY, logfile);
+    command = './generate_tile.py %d %d > %s 2>&1 &' % (nextX, nextY, logfile);
     os.system(command);
     #os.remove(logfile);
 
