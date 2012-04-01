@@ -236,13 +236,14 @@ def main():
         osmfile = os.getcwd() + '/data_%d_%d.osm' % (x, y);
 
     ogloutput = os.getcwd() + '/ogltile_%d_%d.png' % (x, y);
+    params = '/tmp/params_%d_%d.txt' % (x, y);
     outfile = os.getcwd() + '/%%s_ogltile_%d_%d.png' % (x, y);
     povoutput = os.getcwd() + '/povtile_%d_%d.png' % (x, y);
     povfile = os.getcwd() + '/tile_%d_%d.pov' % (x, y);
     logfile = parentDir + '/logs/performancetable';
 
     if ROTATABLE_MAP:
-        paramfile = open('/tmp/params.txt', 'w')
+        paramfile = open(params, 'w')
         content = '--config osm2world.config -i ' + osmfile + ' -o ' + outfile + ' --resolution 8192,8192 ' \
             ' --oview.tiles %d,%d,%d --oview.from %s --performancePrint --performanceTable %s\n'
         print >> paramfile, (content % ('n', ZOOM, x, y, 'S', logfile))
@@ -253,7 +254,7 @@ def main():
     # first let's run osm2world...
     os.chdir(OSM2WORLD + 'build/');
     if ROTATABLE_MAP:
-        command = './osm2world.sh --parameterFile /tmp/params.txt'
+        command = './osm2world.sh --parameterFile ' + params
     else:
         command = './osm2world.sh --config osm2world.config -i %s ' \
             ' -o %s %s --resolution 8192,8192 --oview.tiles %d,%d,%d --performancePrint --performanceTable %s '
