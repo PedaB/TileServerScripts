@@ -8,6 +8,7 @@ KEEP_DATA = True      # should we keep temp data? usefull for debugging
 HAVE_X = False        # do we have a X-server?
 SCALE_IMAGES = False  # do we also calculate scaled tiles?
 NATIVE_TILEGEN = True # use the c tilegenerator (instead of the convert based)
+ROTATABLE_MAP = True  # if the map can be viewed from 4 cardinal directions
 
 STOP_FILE = '/tmp/stop_tilegen'
 OSM2WORLD = "/home/xxx/osm/osm2w/osm2world/"
@@ -35,7 +36,7 @@ def getfile(tileDir, outputDir, zoom, x, y):
 
 
 """ generate the tiles for the different zooms """
-def generateTiles(tileImg, x, y, tilesDir, outputDir):
+def generateTiles(tileImg, x, y, tilesDir, outputDir, direction = 'n'):
     tmp = tilesDir + 'tmp/';
     tmpFile = tmp + 'resized_%d_%d.png' % (x, y);
 
@@ -45,7 +46,7 @@ def generateTiles(tileImg, x, y, tilesDir, outputDir):
 
     if NATIVE_TILEGEN:
         
-        command = PNG_TILEGEN + "png_tilegen %s %s %d %d 18";
+        command = PNG_TILEGEN + "png_tilegen %s %s %d %d 18 " + direction;
         command = command % (tileImg, tilesDir + outputDir + '/', x, y);
         print(command);
         os.system(command);
@@ -235,36 +236,54 @@ def main():
         osmfile = os.getcwd() + '/data_%d_%d.osm' % (x, y);
 
     ogloutput = os.getcwd() + '/ogltile_%d_%d.png' % (x, y);
+    outfile = os.getcwd() + '/%%s_ogltile_%d_%d.png' % (x, y);
     povoutput = os.getcwd() + '/povtile_%d_%d.png' % (x, y);
     povfile = os.getcwd() + '/tile_%d_%d.pov' % (x, y);
     logfile = parentDir + '/logs/performancetable';
 
-    # first let's run osm2world...
+    if ROTATABLE_MAP:
+        paramfile = open('/tmp/params.txt', 'w')
+        content = '--config osm2world.config -i ' + osmfile + ' -o ' + outfile + ' --resolution 8192,8192 ' \
+            ' --oview.tiles %d,%d,%d --oview.from %s --performancePrint --performanceTable %s\n'
+        print >> paramfile, (content % ('n', ZOOM, x, y, 'S', logfile))
+        print >> paramfile, (content % ('s', ZOOM, x, y, 'N', logfile))
+        print >> paramfile, (content % ('w', ZOOM, x, y, 'E', logfile))
+        print >> paramfile, (content % ('e', ZOOM, x, y, 'W', logfile))
 
+    # first let's run osm2world...
     os.chdir(OSM2WORLD + 'build/');
-    command = './osm2world.sh --config osm2world.config -i %s ' \
-        ' -o %s %s --resolution 8192,8192 --oview.tiles %d,%d,%d --performancePrint --performanceTable %s '
+    if ROTATABLE_MAP:
+        command = './osm2world.sh --parameterFile /tmp/params.txt'
+    else:
+        command = './osm2world.sh --config osm2world.config -i %s ' \
+            ' -o %s %s --resolution 8192,8192 --oview.tiles %d,%d,%d --performancePrint --performanceTable %s '
+        command = command % (osmfile, ogloutput, povfile, ZOOM, x, y, logfile);
+
     if not HAVE_X:
         testCommand = 'ps aux|grep Xvfb|grep -v grep|wc -l';
         if int(os.popen(testCommand).read()) == 0:
                 xvfbCommand = 'Xvfb -screen 0 1024x768x24 &';
                 os.system(xvfbCommand);
         command = 'DISPLAY=:0 ' + command;
-    command = command % (osmfile, ogloutput, povfile, ZOOM, x, y, logfile);
     print("Running osm2world for pov and opengl via:\n" + command);
     os.system(command)
 
     # then start povray to do the rest...
-
-    command = 'povray +W8192 +H8192 +B100 +A +FN -D "+I%s" + "+O%s"'
-    command = command % (povfile, povoutput);
-    print("Running povray for png output via:\n" + command);
-    os.system(command)
+    #command = 'povray +W8192 +H8192 +B100 +A +FN -D "+I%s" + "+O%s"'
+    #command = command % (povfile, povoutput);
+    #print("Running povray for png output via:\n" + command);
+    #os.system(command)
 
     # and finally generate the tiles...
 
-    generateTiles(ogloutput, x, y, parentDir + '/tiles/', 'ogltiles/')
-    generateTiles(povoutput, x, y, parentDir + '/tiles/', 'povtiles/')
+    if ROTATABLE_MAP:
+        generateTiles(outfile % 'n', x, y, parentDir + '/tiles/', 'ogltiles/n/', 'n')
+        generateTiles(outfile % 's', x, y, parentDir + '/tiles/', 'ogltiles/s/', 's')
+        generateTiles(outfile % 'w', x, y, parentDir + '/tiles/', 'ogltiles/w/', 'w')
+        generateTiles(outfile % 'e', x, y, parentDir + '/tiles/', 'ogltiles/e/', 'e')
+    else:
+        generateTiles(ogloutput, x, y, parentDir + '/tiles/', 'ogltiles/')
+    #generateTiles(povoutput, x, y, parentDir + '/tiles/', 'povtiles/')
 
     if SCALE_IMAGES:
         # TODO: rerun with scaled tiles
