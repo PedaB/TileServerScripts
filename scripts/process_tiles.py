@@ -33,7 +33,8 @@ def main():
     movedTile = "/tmp/" + nextTile[nextTile.rfind("/"):];
     command = 'mv %s %s' % (nextTile, movedTile)
     #print(command)
-    os.system(command)
+    if os.system(command) != 0:
+        sys.exit();
     
     reg = re.search('.*_([0-9]+)_([0-9]+).pbf', nextTile)
     nextX = int(reg.group(1))
