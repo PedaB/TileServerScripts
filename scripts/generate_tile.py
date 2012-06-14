@@ -223,7 +223,8 @@ def main():
             # fetch data
             osmfile = 'data_%d_%d.osm' % (x, y);
             #command = 'wget -O %s "http://api.openstreetmap.org/api/0.6/map?bbox=%f,%f,%f,%f"';
-            command = 'wget -O %s "http://open.mapquestapi.com/xapi/api/0.6/map?bbox=%f,%f,%f,%f"';
+            #command = 'wget -O %s "http://open.mapquestapi.com/xapi/api/0.6/map?bbox=%f,%f,%f,%f"';
+            command = 'wget -O %s "http://www.overpass-api.de/api/xapi?map?bbox=%f,%f,%f,%f[@meta]"';
             command = command % (osmfile, minlon, minlat, maxlon, maxlat);
             print ("Fetching live data from server via:\n" + command);
             os.system(command)
