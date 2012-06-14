@@ -41,11 +41,12 @@ def main():
     nextY = int(reg.group(2))
 
     logfile = '/tmp/logs/run_%d_%d.log' % (nextX, nextY);
-    command = './generate_tile.py %d %d %s > %s 2>&1 &' % (nextX, nextY, movedTile, logfile);
+    command = './generate_tile.py %d %d %s > %s 2>&1 ' % (nextX, nextY, movedTile, logfile);
+    command +=  ' ; mv %s %s ' % (movedTile, '/data/tiledata/oldtiles/');
+    command = '( ' + command + ')&';
+
     print(command)
     os.system(command)
-
-    os.system('mv %s %s' % (movedTile, '/data/tiledata/oldtiles/'));
 
 # call main...
 main()
