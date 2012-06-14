@@ -4,7 +4,7 @@
 import os, math, getopt, sys, re
 
 STOP_FILE = '/tmp/stop_tilegen'
-INPUT_DIR = '/tmp/geo/'
+INPUT_DIR = '/data/tiledata/tiles/'
 MAX_THREADS = 4
 
 def main():
@@ -40,12 +40,12 @@ def main():
     nextX = int(reg.group(1))
     nextY = int(reg.group(2))
 
-    logfile = '/tmp/run_%d_%d.log' % (nextX, nextY);
+    logfile = '/tmp/logs/run_%d_%d.log' % (nextX, nextY);
     command = './generate_tile.py %d %d %s > %s 2>&1 &' % (nextX, nextY, movedTile, logfile);
-    #print(command)
+    print(command)
     os.system(command)
-    os.remove(movedTile)
-    #os.remove(logfile);
+
+    os.system('mv %s %s' % (movedTile, '/data/tiledata/oldtiles/'));
 
 # call main...
 main()
