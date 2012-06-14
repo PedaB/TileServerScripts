@@ -228,6 +228,12 @@ def main():
             command = command % (osmfile, minlon, minlat, maxlon, maxlat);
             print ("Fetching live data from server via:\n" + command);
             os.system(command)
+
+            #fixing missing bounds in overpass api
+            sedcommand = "sed -i '/^<osm/a <bounds minlon=\"%f\" minlat=\"%f\" maxlon=\"%f\" maxlat=\"%f\"/>' %s"
+            sedcommand = sedcommand % (minlon, minlat, maxlon, maxlat, osmfile)
+            os.system(sedcommand)
+
         else:
             osmdump = 'bayern.osm.pbf'
             osmfile = 'data_%d_%d.osm' % (x, y);
