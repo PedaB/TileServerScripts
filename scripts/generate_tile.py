@@ -47,7 +47,7 @@ def generateTiles(tileImg, x, y, tilesDir, outputDir, direction = 'n'):
 
     if NATIVE_TILEGEN:
         
-        command = PNG_TILEGEN + "png_tilegen %s %s %d %d 18 " + direction;
+        command = 'time -pv ' + PNG_TILEGEN + "png_tilegen %s %s %d %d 18 " + direction;
         command = command % (tileImg, tilesDir + outputDir + '/', x, y);
         print(command);
         os.system(command);
@@ -264,9 +264,9 @@ def main():
     # first let's run osm2world...
     os.chdir(OSM2WORLD + 'build/');
     if ROTATABLE_MAP:
-        command = './osm2world.sh --parameterFile ' + params
+        command = 'time -pv ./osm2world.sh --parameterFile ' + params
     else:
-        command = './osm2world.sh --config osm2world.config -i %s ' \
+        command = 'time -pv ./osm2world.sh --config osm2world.config -i %s ' \
             ' -o %s %s --resolution 8192,4096 --oview.tiles %d,%d,%d --performancePrint --performanceTable %s '
         command = command % (osmfile, ogloutput, povfile, ZOOM, x, y, logfile);
 
