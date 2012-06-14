@@ -107,7 +107,7 @@ def generateTiles(tileImg, x, y, tilesDir, outputDir, direction = 'n'):
         os.system('mkdir -p ' + outfile);
         outfile = outfile + str(y) + '.png';
 
-        command = 'montage %s %s %s %s -tile 2x2 -geometry 128x128 %s' % (b1, b2, b3, b4, outfile);
+        command = 'montage %s %s %s %s -tile 2x2 -geometry 128x64 %s' % (b1, b2, b3, b4, outfile);
         print('combining images: ' + command);
         os.system(command);
 
@@ -246,7 +246,7 @@ def main():
 
     if ROTATABLE_MAP:
         paramfile = open(params, 'w')
-        content = '--config osm2world.config -i ' + osmfile + ' -o ' + outfile + ' --resolution 8192,8192 ' \
+        content = '--config osm2world.config -i ' + osmfile + ' -o ' + outfile + ' --resolution 8192,4096 ' \
             ' --oview.tiles %d,%d,%d --oview.from %s --performancePrint --performanceTable %s'
         print >> paramfile, (content % ('n', ZOOM, x, y, 'S', logfile))
         print >> paramfile, (content % ('s', ZOOM, x, y, 'N', logfile))
@@ -260,7 +260,7 @@ def main():
         command = './osm2world.sh --parameterFile ' + params
     else:
         command = './osm2world.sh --config osm2world.config -i %s ' \
-            ' -o %s %s --resolution 8192,8192 --oview.tiles %d,%d,%d --performancePrint --performanceTable %s '
+            ' -o %s %s --resolution 8192,4096 --oview.tiles %d,%d,%d --performancePrint --performanceTable %s '
         command = command % (osmfile, ogloutput, povfile, ZOOM, x, y, logfile);
 
     if not HAVE_X:
