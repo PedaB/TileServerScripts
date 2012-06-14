@@ -11,10 +11,11 @@ NATIVE_TILEGEN = True # use the c tilegenerator (instead of the convert based)
 ROTATABLE_MAP = True  # if the map can be viewed from 4 cardinal directions
 
 STOP_FILE = '/tmp/stop_tilegen'
-OSM2WORLD = "/home/xxx/osm/osm2w/osm2world/"
-MAPSPLIT = "/home/xxx/workspace/mapsplit/"
-PNG_TILEGEN = "/home/xxx/osm/png_tilegen/"
-TILE_OUTPUT = "/tmp/geo/"
+OSM2WORLD = "/home/osmuser/OSM2World/"
+MAPSPLIT = "/home/osmuser/mapsplit/"
+PNG_TILEGEN = "/home/osmuser/png_tilegen/"
+TILE_OUTPUT = "/data/tiledata/tiles/"
+RENDER_OUTPUT = "/data/rendered/"
 ZOOM = 13
 
 
@@ -147,8 +148,8 @@ def getData():
     
     dir = os.getcwd()
     os.chdir(MAPSPLIT);
-    command = './mapsplit -v -t -b=0.1 -d=/tmp/date.txt %s %s'
-    command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_');
+    command = './mapsplit -v -t -b=0.1 -d=/data/tiledata/lastchange.txt %s %s'
+    command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
     print ('Splitting bayern into tiles via:\n' + command)
     os.system(command)
 
@@ -195,8 +196,9 @@ def main():
         sys.stderr.write('Supply at least tile coordinates!\n')
         sys.exit(2)
 
-    parentDir = os.getcwd();
-    os.chdir('tmp/');
+    #parentDir = os.getcwd();
+    parentDir = RENDER_OUTPUT
+    os.chdir(parentDir + '/tmp/');
 
     x = int(args[0]);
     y = int(args[1]);
@@ -236,8 +238,8 @@ def main():
         osmfile = os.getcwd() + '/data_%d_%d.osm' % (x, y);
 
     ogloutput = os.getcwd() + '/ogltile_%d_%d.png' % (x, y);
-    params = '/tmp/params_%d_%d.txt' % (x, y);
-    outfile = os.getcwd() + '/%%s_ogltile_%d_%d.png' % (x, y);
+    params = '/tmp/logs/params_%d_%d.txt' % (x, y);
+    outfile = os.getcwd() + '/%%s_ogltile_%d_%d.ppm' % (x, y);
     povoutput = os.getcwd() + '/povtile_%d_%d.png' % (x, y);
     povfile = os.getcwd() + '/tile_%d_%d.pov' % (x, y);
     logfile = parentDir + '/logs/performancetable';
@@ -245,11 +247,12 @@ def main():
     if ROTATABLE_MAP:
         paramfile = open(params, 'w')
         content = '--config osm2world.config -i ' + osmfile + ' -o ' + outfile + ' --resolution 8192,8192 ' \
-            ' --oview.tiles %d,%d,%d --oview.from %s --performancePrint --performanceTable %s\n'
+            ' --oview.tiles %d,%d,%d --oview.from %s --performancePrint --performanceTable %s'
         print >> paramfile, (content % ('n', ZOOM, x, y, 'S', logfile))
         print >> paramfile, (content % ('s', ZOOM, x, y, 'N', logfile))
         print >> paramfile, (content % ('w', ZOOM, x, y, 'E', logfile))
         print >> paramfile, (content % ('e', ZOOM, x, y, 'W', logfile))
+        paramfile.close()
 
     # first let's run osm2world...
     os.chdir(OSM2WORLD + 'build/');
