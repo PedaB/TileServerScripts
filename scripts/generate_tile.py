@@ -251,6 +251,9 @@ def main():
     povfile = os.getcwd() + '/tile_%d_%d.pov' % (x, y);
     logfile = parentDir + '/logs/performancetable';
 
+    # create the logfile dir
+    os.system('mkdir /tmp/logs')
+
     if ROTATABLE_MAP:
         paramfile = open(params, 'w')
         content = '--config osm2world.config -i ' + osmfile + ' -o ' + outfile + ' --resolution 8192,4096 ' \
