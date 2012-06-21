@@ -4,7 +4,7 @@
 import os, math, getopt, sys, time
 
 GET_LIVE_DATA = False # should we get data via the osm api? (caution, this might get you blocked!)
-KEEP_DATA = True      # should we keep temp data? usefull for debugging
+KEEP_DATA = False     # should we keep temp data? usefull for debugging
 HAVE_X = False        # do we have a X-server?
 SCALE_IMAGES = False  # do we also calculate scaled tiles?
 NATIVE_TILEGEN = True # use the c tilegenerator (instead of the convert based)
@@ -303,10 +303,14 @@ def main():
     
     # cleanup
     if not KEEP_DATA:
-        command = 'rm %s %s %s %s' % (osmfile, ogloutput, povoutput, povfile);
+        if ROTATABLE_MAP:
+            ogloutput = (outfile % 'n')
+            ogloutput += ' ' + (outfile % 's')
+            ogloutput += ' ' + (outfile % 'w')
+            ogloutput += ' ' + (outfile % 'e')
+        command = 'rm %s %s %s' % (ogloutput, povoutput, povfile);
         print ("Going to clean up and remove temptiles:\n" + command);
         os.system(command);
-
 
 # call main...
 main()
