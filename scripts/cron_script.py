@@ -6,7 +6,7 @@ import os, math, getopt, sys
 STOP_FILE = '/tmp/stop_tilegen'
 REMAINING_TILES = '/tmp/tiles_todo'
 WEBSITE_ORDERS = '/tmp/orders'
-MAX_THREADS = 4
+MAX_THREADS = 3
 
 
 def main():
