@@ -4,7 +4,8 @@
 import os, math, getopt, sys, re
 
 STOP_FILE = '/tmp/stop_tilegen'
-INPUT_DIR = '/data/tiledata/tiles/'
+INPUT_DIR = '/home/osmuser/input/tiles/'
+FINISHED_DIR = '/home/osmuser/input/old/'
 MAX_THREADS = 4
 
 def main():
@@ -30,7 +31,7 @@ def main():
 
     nextTile = files[0].strip();
 
-    movedTile = "/tmp/" + nextTile[nextTile.rfind("/"):];
+    movedTile = FINISHED_DIR + nextTile[nextTile.rfind("/"):];
     command = 'mv %s %s' % (nextTile, movedTile)
     #print(command)
     if os.system(command) != 0:
@@ -42,7 +43,7 @@ def main():
 
     logfile = '/tmp/logs/run_%d_%d.log' % (nextX, nextY);
     command = './generate_tile.py %d %d %s > %s 2>&1 ' % (nextX, nextY, movedTile, logfile);
-    command +=  ' ; mv %s %s ' % (movedTile, '/data/tiledata/oldtiles/');
+    #command +=  ' ; mv %s %s ' % (movedTile, '/data/tiledata/oldtiles/');
     command = '( ' + command + ')&';
 
     print(command)
