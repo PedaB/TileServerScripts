@@ -14,8 +14,8 @@ STOP_FILE = '/tmp/stop_tilegen'
 OSM2WORLD = "/home/osmuser/OSM2World/"
 MAPSPLIT = "/home/osmuser/mapsplit/"
 PNG_TILEGEN = "/home/osmuser/png_tilegen/"
-TILE_OUTPUT = "/data/tiledata/tiles/"
-RENDER_OUTPUT = "/data/rendered/"
+TILE_OUTPUT = "/home/osmuser/input/tiles/"
+RENDER_OUTPUT = "/home/osmuser/output/"
 ZOOM = 13
 
 
@@ -47,7 +47,7 @@ def generateTiles(tileImg, x, y, tilesDir, outputDir, direction = 'n'):
 
     if NATIVE_TILEGEN:
         
-        command = 'time -pv ' + PNG_TILEGEN + "png_tilegen %s %s %d %d 18 " + direction;
+        command = 'time -pv ' + PNG_TILEGEN + "jpg_tilegen %s %s %d %d 18 " + direction;
         command = command % (tileImg, tilesDir + outputDir + '/', x, y);
         print(command);
         os.system(command);
@@ -148,7 +148,7 @@ def getData():
     
     dir = os.getcwd()
     os.chdir(MAPSPLIT);
-    command = './mapsplit -v -t -b=0.1 -d=/data/tiledata/lastchange.txt %s %s'
+    command = './mapsplit -v -t -b=0.1 -d=/home/osmuser/input/lastchange.txt %s %s'
     command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
     print ('Splitting bayern into tiles via:\n' + command)
     os.system(command)
@@ -198,7 +198,8 @@ def main():
 
     #parentDir = os.getcwd();
     parentDir = RENDER_OUTPUT
-    os.chdir(parentDir + '/tmp/');
+    #os.chdir(parentDir + '/tmp/');
+    os.chdir('/tmp/');
 
     x = int(args[0]);
     y = int(args[1]);
@@ -249,7 +250,7 @@ def main():
     outfile = os.getcwd() + '/%%s_ogltile_%d_%d.ppm' % (x, y);
     povoutput = os.getcwd() + '/povtile_%d_%d.png' % (x, y);
     povfile = os.getcwd() + '/tile_%d_%d.pov' % (x, y);
-    logfile = parentDir + '/logs/performancetable';
+    logfile = '/tmp/logs/performancetable';
 
     # create the logfile dir
     os.system('mkdir /tmp/logs')
@@ -291,10 +292,10 @@ def main():
     # and finally generate the tiles...
 
     if ROTATABLE_MAP:
-        generateTiles(outfile % 'n', x, y, parentDir + '/tiles/', 'ogltiles/n/', 'n')
-        generateTiles(outfile % 's', x, y, parentDir + '/tiles/', 'ogltiles/s/', 's')
-        generateTiles(outfile % 'w', x, y, parentDir + '/tiles/', 'ogltiles/w/', 'w')
-        generateTiles(outfile % 'e', x, y, parentDir + '/tiles/', 'ogltiles/e/', 'e')
+        generateTiles(outfile % 'n', x, y, parentDir + '/tiles/', 'n/', 'n')
+        generateTiles(outfile % 's', x, y, parentDir + '/tiles/', 's/', 's')
+        generateTiles(outfile % 'w', x, y, parentDir + '/tiles/', 'w/', 'w')
+        generateTiles(outfile % 'e', x, y, parentDir + '/tiles/', 'e/', 'e')
     else:
         generateTiles(ogloutput, x, y, parentDir + '/tiles/', 'ogltiles/')
     #generateTiles(povoutput, x, y, parentDir + '/tiles/', 'povtiles/')
