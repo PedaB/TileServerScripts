@@ -29,11 +29,11 @@ def tile2lat(y, zoom=ZOOM):
     return (180/math.pi*math.atan(0.5*(math.e**(n)-math.e**(-n))));
 
 def getfile(tileDir, outputDir, zoom, x, y):
-    file = tileDir + outputDir + '/' + str(zoom) + '/' + str(x) + '/' + str(y) + '.png';
+    file = tileDir + outputDir + '/' + str(zoom) + '/' + str(x) + '/' + str(y) + '.jpg';
     if os.path.exists(file):
         return file;
     else:
-        return tileDir + 'white.png';
+        return tileDir + 'white.jpg';
 
 
 """ generate the tiles for the different zooms """
@@ -105,7 +105,7 @@ def generateTiles(tileImg, x, y, tilesDir, outputDir, direction = 'n'):
         b4 = getfile(tilesDir, outputDir, zoom+6, 2*x+1, 2*y+1);
         outfile = tilesDir + outputDir + '/' + str(zoom+5) + '/' + str(x) + '/';
         os.system('mkdir -p ' + outfile);
-        outfile = outfile + str(y) + '.png';
+        outfile = outfile + str(y) + '.jpg';
 
         command = 'montage %s %s %s %s -tile 2x2 -geometry 128x64 %s' % (b1, b2, b3, b4, outfile);
         print('combining images: ' + command);
