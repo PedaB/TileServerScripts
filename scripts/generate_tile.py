@@ -94,6 +94,19 @@ def generateTiles(tileImg, x, y, tilesDir, outputDir, direction = 'n'):
     print("TODO: Level <13")
     print(zoom)
 
+    if ROTATABLE_MAP:
+        if direction == 'e':
+            tmp = x
+            x = y
+            y = (2<<12) - 1 - tmp
+        elif direction == 's':
+            x = (2<<12) - 1 - x
+            y = (2<<12) - 1 - y
+        elif direction == 'w':
+            tmp = x
+            x = (2<<12) - 1 - y
+            y = tmp
+
     while True:
         x = x / 2;
         y = y / 2;
