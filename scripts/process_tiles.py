@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os, math, getopt, sys, re
+import os, math, getopt, sys, re, random
 
 STOP_FILE = '/tmp/stop_tilegen'
 INPUT_DIR = '/home/osmuser/input/tiles/'
@@ -21,7 +21,9 @@ def main():
         print('Waiting for next round.')
         sys.exit();
 
-    files = os.popen('ls -tr %s/*.pbf' % INPUT_DIR).readlines()
+    #files = os.popen('ls -tr %s/*.pbf' % INPUT_DIR).readlines()
+    dirList = os.listdir(INPUT_DIR);
+    files = filter(lambda x:x.endswith('.pbf'), dirList)
 
     if len(files) == 0:
         print('No pending work');
@@ -29,7 +31,7 @@ def main():
 
     print(str(len(files)) + ' tiles to go...')
 
-    nextTile = files[0].strip();
+    nextTile = INPUT_DIR + '/' + files[random.randint(0, len(files)-1)].strip();
 
     movedTile = FINISHED_DIR + nextTile[nextTile.rfind("/"):];
     command = 'mv %s %s' % (nextTile, movedTile)
