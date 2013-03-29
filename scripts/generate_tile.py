@@ -117,7 +117,7 @@ def generateTiles(tileImg, x, y, tilesDir, outputDir, direction = 'n'):
 
 """ Print usage informations """
 def usage():
-    print("generate_tile.py [-h|--help] [--fetch-data] [--bzr-pull] <tileX@zoom13> >tileY@zoom13>");
+    print("generate_tile.py [-h|--help] [--fetch-[austria|switzerland|germany|all]] <tileX@zoom13> >tileY@zoom13>");
 
 
 """ stop generation of tiles and wait for all processes to finish """
@@ -136,21 +136,119 @@ def restart_rendering():
     os.system(command);
 
 
-""" Fetch data from Geofabrik """
-def getData():
+""" Fetch data for Germany from Geofabrik """
+def getGermanyData():
     stop_rendering();
 
-    osmdump = 'bayern.osm.pbf'
+    osmfull = 'germany.osm.pbf'
     os.chdir(TILE_OUTPUT + '/dl/');
-    command = 'wget -O %s "http://download.geofabrik.de/osm/europe/germany/bayern.osm.pbf"' % osmdump
-    print ("Fetching bayern data from geofabrik via:\n" + command);
+    command = 'wget -O %s "http://download.geofabrik.de/europe/germany-latest.osm.pbf"' % osmfull
+    print ("Fetching germany data from geofabrik via:\n" + command);
+    os.system(command)
+
+    # Start with south germany...
+
+    osmdump = 'germany_south.pbf'
+    command = '/opt/osmosis/bin/osmosis --read-pbf %s --bounding-box top=50.2 left=6.0 bottom=47.1 right=13.9 --write-pbf %s'
+    command = command % (osmfull, osmdump)
+    print ('Cutting south germany via:\n' + command)
+    os.system(command)
+
+    dir = os.getcwd()
+    os.chdir(MAPSPLIT);
+    command = './mapsplit -v -t -b=0.1 -c -f=2048 -s=100000000,15000000,300000 -p=/home/osmuser/germany_south.poly -d=/home/osmuser/input/lastchange_germany_south.txt %s %s'
+    command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
+    print ('Splitting south germany into tiles via:\n' + command)
+    os.system(command)
+
+    command = 'mv ' + TILE_OUTPUT + '/dl/tiles_* ' + TILE_OUTPUT;
+    print ('Copy tile-files to working dir via:\n' + command)
+    os.system(command)
+
+    # Continue with middle germany...
+
+    osmdump = 'germany_middle.pbf'
+    os.chdir(TILE_OUTPUT + '/dl/');
+    command = '/opt/osmosis/bin/osmosis --read-pbf %s --bounding-box top=53.4 left=5.7 bottom=50.1 right=15.1 --write-pbf %s'
+    command = command % (osmfull, osmdump)
+    print ('Cutting middle germany via:\n' + command)
+    os.system(command)
+
+    dir = os.getcwd()
+    os.chdir(MAPSPLIT);
+    command = './mapsplit -v -t -b=0.1 -c -f=2048 -s=100000000,15000000,300000 -p=/home/osmuser/germany_middle.poly -d=/home/osmuser/input/lastchange_germany_middle.txt %s %s'
+    command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
+    print ('Splitting middle germany into tiles via:\n' + command)
+    os.system(command)
+
+    command = 'mv ' + TILE_OUTPUT + '/dl/tiles_* ' + TILE_OUTPUT;
+    print ('Copy tile-files to working dir via:\n' + command)
+    os.system(command)
+
+    # Finaly do north germany...
+
+    osmdump = 'germany_north.pbf'
+    os.chdir(TILE_OUTPUT + '/dl/');
+    command = '/opt/osmosis/bin/osmosis --read-pbf %s --bounding-box top=55.2 left=6.1 bottom=53.1 right=14.5 --write-pbf %s'
+    command = command % (osmfull, osmdump)
+    print ('Cutting north germany via:\n' + command)
+    os.system(command)
+
+    dir = os.getcwd()
+    os.chdir(MAPSPLIT);
+    command = './mapsplit -v -t -b=0.1 -c -f=2048 -s=100000000,15000000,300000  -p=/home/osmuser/germany_north.poly -d=/home/osmuser/input/lastchange_germany_north.txt %s %s'
+    command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
+    print ('Splitting north germany into tiles via:\n' + command)
+    os.system(command)
+
+    command = 'mv ' + TILE_OUTPUT + '/dl/tiles_* ' + TILE_OUTPUT;
+    print ('Copy tile-files to working dir via:\n' + command)
+    os.system(command)
+
+    
+    restart_rendering();
+
+
+""" Fetch data for Switzerland from Geofabrik """
+def getSwitzerlandData():
+    stop_rendering();
+
+    osmdump = 'switzerland.osm.pbf'
+    os.chdir(TILE_OUTPUT + '/dl/');
+    command = 'wget -O %s "http://download.geofabrik.de/europe/switzerland-latest.osm.pbf"' % osmdump
+    print ("Fetching switzerland data from geofabrik via:\n" + command);
     os.system(command)
     
     dir = os.getcwd()
     os.chdir(MAPSPLIT);
-    command = './mapsplit -v -t -b=0.1 -d=/home/osmuser/input/lastchange.txt %s %s'
+    command = './mapsplit -v -t -b=0.1 -c -f=2048 -p=/home/osmuser/switzerland.poly -d=/home/osmuser/input/lastchange_switzerland.txt %s %s'
     command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
-    print ('Splitting bayern into tiles via:\n' + command)
+    print ('Splitting switzerland into tiles via:\n' + command)
+    os.system(command)
+
+    # and finaly copy let's copy the files back to our working directory..
+    command = 'mv ' + TILE_OUTPUT + '/dl/tiles_* ' + TILE_OUTPUT;
+    print ('Copy tile-files to working dir via:\n' + command)
+    os.system(command)
+    
+    restart_rendering();
+
+
+""" Fetch data for Germany from Geofabrik """
+def getAustriaData():
+    stop_rendering();
+
+    osmdump = 'austria.osm.pbf'
+    os.chdir(TILE_OUTPUT + '/dl/');
+    command = 'wget -O %s "http://download.geofabrik.de/europe/austria-latest.osm.pbf"' % osmdump
+    print ("Fetching austria data from geofabrik via:\n" + command);
+    os.system(command)
+    
+    dir = os.getcwd()
+    os.chdir(MAPSPLIT);
+    command = './mapsplit -v -t -b=0.1 -c -f=2048 -p=/home/osmuser/austria.poly -d=/home/osmuser/input/lastchange_austria.txt %s %s'
+    command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
+    print ('Splitting austria into tiles via:\n' + command)
     os.system(command)
 
     # and finaly copy let's copy the files back to our working directory..
@@ -174,7 +272,7 @@ def bzrPull():
 """
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'h', ['help', 'fetch-data', 'bzr-pull'])
+        opts, args = getopt.getopt(sys.argv[1:], 'h', ['help', 'fetch-austria', 'fetch-switzerland', 'fetch-germany', 'fetch-all', 'bzr-pull'])
     except getopt.GetoptError, err:
         sys.stderr.write(str(err) + '\n')
         sys.exit(1)
@@ -183,8 +281,19 @@ def main():
         if o in ('-h', '--help'):
             usage();
             sys.exit();
-        elif o == '--fetch-data':
-            getData();
+        elif o == '--fetch-austria':
+            getAustriaData();
+            sys.exit();
+        elif o == '--fetch-switzerland':
+            getSwitzerlandData();
+            sys.exit();
+        elif o == '--fetch-germany':
+            getGermanyData();
+            sys.exit();
+        elif o == '--fetch-all':
+            getAustriaData();
+            getSwitzerlandData();
+            getGermanyData();
             sys.exit();
         elif o == '--bzr-pull':
             bzrPull();
