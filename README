@@ -4,38 +4,52 @@ OSM2World. Everything needed is contained in this repository
 and you're adviced to checkout the repository at once and link
 the subdirectories/files to the appropriate locations.
 
-== Requirements ==
+== Software Requirements ==
 
 * webserver
 * python
 * rrdtools
 * mapsplit (http://wiki.openstreetmap.org/wiki/Mapsplit)
 * osm2world (http://osm2world.org/)
+* tilegen (https://github.com/PedaB/png_tilegen)
 * ...
+
+== Hardware Requirements ==
+
+* A current core i7 can render around 200-250 tiles per hour
+* at least 8 GB Ram
+* much disc space (Germany requires around 3TB)
 
 == Scripts ==
 
 There is a central configuration file (TODO) that will be used
-by all scripts.
+by all scripts. At  the moment you still have to check each file
+and configure it for your needs
 
 == Website ==
 
-The website consists of different parts:
+The website (web/) consists of different parts:
 
-* the web directory containing the slippy map html pages
-* a directory containing the rendered tiles (3D tiles and label-tiles)
-* a set of php scripts for dynamic tile generation (labels-, date-tiles)
-  and some scripts to enable the used to manually rerender selected tiles
+* the slippy map html page (slippymap.html)
+* a directory containing the rendered tiles (web/tiles/). Remember to
+  have enough free space for this as tiles might get quite large!
+* a directory containing php files to dynamicaly generate a 
+  timestamp overlay and to extract single tile files out of 
+  the packed tile files (web/meta/)
+* additional scripts to aid in debugging tiles and request
+  rerendering of tiles (web/browse/)
 
-== Crontab ==
+== Running ==
 
-You should add at least the following lines to your cronjob
+After you have setup everything (remember to get the isocore textures
+for OSM2World, too!) start a endless loop like this:
+   while ( true ) ; do ./process_tiles.py ; sleep 2 ; done
 
-15 2 * * * cd /dir/to/scripts && ./generate_tile.py --fetch-data
-0 2 * * * cd /dir/to/scripts && ./generate_tile.py --bzr-pull
-*/5 * * * * cd /dir/to/scripts && ./cron_script.py
+If you additionally want to be able to do manual rerender requests you
+should also add a call to ./cron_script.py
 
-Once the scripts work you should add a "> /dev/null" redirection. Otherwise,
-on any output cron assumes an error and thus sends you an email immediatly
-which produces many mails ;)
+== TODO ==
 
+There's much work to do, most importantly the scripts should use a 
+global and central configuration file. At some point the render process
+should be switched to daemon mode or live rendering.
