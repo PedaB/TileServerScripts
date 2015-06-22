@@ -169,7 +169,7 @@ def getGermanyData():
 
     dir = os.getcwd()
     os.chdir(MAPSPLIT);
-    command = './mapsplit -v -t -b=0.1 -c -f=2048 -s=100000000,15000000,300000 -p=/home/osmuser/germany_south.poly -d=/home/osmuser/input/lastchange_germany_south.txt %s %s'
+    command = './mapsplit -v -t -b=0.1 -c -f=2048 -s=100000000,25000000,450000 -p=/home/osmuser/germany_south.poly -d=/home/osmuser/input/lastchange_germany_south.txt %s %s'
     command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
     print ('Splitting south germany into tiles via:\n' + command)
     os.system(command)
@@ -177,6 +177,10 @@ def getGermanyData():
     command = 'mv ' + TILE_OUTPUT + '/dl/tiles_* ' + TILE_OUTPUT;
     print ('Copy tile-files to working dir via:\n' + command)
     os.system(command)
+
+    command = 'rm ' + osmdump;
+    print ('Remove tilefile via:\n' + command)
+    os.system(command);
 
     # Continue with middle germany...
 
@@ -189,7 +193,7 @@ def getGermanyData():
 
     dir = os.getcwd()
     os.chdir(MAPSPLIT);
-    command = './mapsplit -v -t -b=0.1 -c -f=2048 -s=100000000,15000000,300000 -p=/home/osmuser/germany_middle.poly -d=/home/osmuser/input/lastchange_germany_middle.txt %s %s'
+    command = './mapsplit -v -t -b=0.1 -c -f=2048 -s=150000000,30000000,450000 -p=/home/osmuser/germany_middle.poly -d=/home/osmuser/input/lastchange_germany_middle.txt %s %s'
     command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
     print ('Splitting middle germany into tiles via:\n' + command)
     os.system(command)
@@ -197,6 +201,10 @@ def getGermanyData():
     command = 'mv ' + TILE_OUTPUT + '/dl/tiles_* ' + TILE_OUTPUT;
     print ('Copy tile-files to working dir via:\n' + command)
     os.system(command)
+
+    command = 'rm ' + osmdump;
+    print ('Remove tilefile via:\n' + command)
+    os.system(command);
 
     # Finaly do north germany...
 
@@ -209,7 +217,7 @@ def getGermanyData():
 
     dir = os.getcwd()
     os.chdir(MAPSPLIT);
-    command = './mapsplit -v -t -b=0.1 -c -f=2048 -s=100000000,15000000,300000  -p=/home/osmuser/germany_north.poly -d=/home/osmuser/input/lastchange_germany_north.txt %s %s'
+    command = './mapsplit -v -t -b=0.1 -c -f=2048 -s=100000000,20000000,450000  -p=/home/osmuser/germany_north.poly -d=/home/osmuser/input/lastchange_germany_north.txt %s %s'
     command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
     print ('Splitting north germany into tiles via:\n' + command)
     os.system(command)
@@ -218,6 +226,14 @@ def getGermanyData():
     print ('Copy tile-files to working dir via:\n' + command)
     os.system(command)
 
+    command = 'rm ' + osmdump;
+    print ('Remove tilefile via:\n' + command)
+    os.system(command);
+    
+    # Finally remove full dump
+    command = 'rm ' + osmfull;
+    print ('Remove tilefile via:\n' + command)
+    os.system(command);
     
     restart_rendering();
 
@@ -243,7 +259,11 @@ def getSwitzerlandData():
     command = 'mv ' + TILE_OUTPUT + '/dl/tiles_* ' + TILE_OUTPUT;
     print ('Copy tile-files to working dir via:\n' + command)
     os.system(command)
-    
+
+    command = 'rm ' + osmdump;
+    print ('Remove tilefile via:\n' + command)
+    os.system(command);
+
     restart_rendering();
 
 
@@ -268,6 +288,10 @@ def getAustriaData():
     command = 'mv ' + TILE_OUTPUT + '/dl/tiles_* ' + TILE_OUTPUT;
     print ('Copy tile-files to working dir via:\n' + command)
     os.system(command)
+
+    command = 'rm ' + osmdump;
+    print ('Remove tilefile via:\n' + command)
+    os.system(command);
     
     restart_rendering();
 
