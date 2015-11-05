@@ -5,17 +5,18 @@ import os, math, getopt, sys, time
 
 GET_LIVE_DATA = False # should we get data via the osm api? (caution, this might get you blocked!)
 KEEP_DATA = False     # should we keep temp data? usefull for debugging
-HAVE_X = False        # do we have a X-server?
+HAVE_X = True         # do we have a X-server?
 SCALE_IMAGES = False  # do we also calculate scaled tiles?
 NATIVE_TILEGEN = True # use the c tilegenerator (instead of the convert based)
 ROTATABLE_MAP = True  # if the map can be viewed from 4 cardinal directions
 
 STOP_FILE = '/tmp/stop_tilegen'
-OSM2WORLD = "/home/osmuser/OSM2World/"
-MAPSPLIT = "/home/osmuser/mapsplit/"
-PNG_TILEGEN = "/home/osmuser/png_tilegen/"
-TILE_OUTPUT = "/home/osmuser/input/tiles/"
-RENDER_OUTPUT = "/home/osmuser/output/"
+OSM2WORLD = "/scratch/peda/OSM2World/"
+MAPSPLIT = "/scratch/peda/mapsplit/"
+PNG_TILEGEN = "/scratch/peda/png_tilegen/"
+TILE_OUTPUT = "/scratch/peda/input/tiles/"
+RENDER_OUTPUT = "/scratch/peda/output/"
+NR_FILES = 10000
 ZOOM = 13
 
 
@@ -169,8 +170,8 @@ def getGermanyData():
 
     dir = os.getcwd()
     os.chdir(MAPSPLIT);
-    command = './mapsplit -v -t -b=0.1 -c -f=2048 -s=100000000,25000000,450000 -p=/home/osmuser/germany_south.poly -d=/home/osmuser/input/lastchange_germany_south.txt %s %s'
-    command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
+    command = './mapsplit -v -t -b=0.1 -c -f=%d -s=100000000,25000000,450000 -p=/scratch/peda/germany_south.poly -d=/scratch/peda/input/lastchange_germany_south.txt %s %s'
+    command = command % (NR_FILES, dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
     print ('Splitting south germany into tiles via:\n' + command)
     os.system(command)
 
@@ -193,8 +194,8 @@ def getGermanyData():
 
     dir = os.getcwd()
     os.chdir(MAPSPLIT);
-    command = './mapsplit -v -t -b=0.1 -c -f=2048 -s=150000000,30000000,450000 -p=/home/osmuser/germany_middle.poly -d=/home/osmuser/input/lastchange_germany_middle.txt %s %s'
-    command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
+    command = './mapsplit -v -t -b=0.1 -c -f=%d -s=160000000,40000000,450000 -p=/scratch/peda/germany_middle.poly -d=/scratch/peda/input/lastchange_germany_middle.txt %s %s'
+    command = command % (NR_FILES, dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
     print ('Splitting middle germany into tiles via:\n' + command)
     os.system(command)
 
@@ -217,8 +218,8 @@ def getGermanyData():
 
     dir = os.getcwd()
     os.chdir(MAPSPLIT);
-    command = './mapsplit -v -t -b=0.1 -c -f=2048 -s=100000000,20000000,450000  -p=/home/osmuser/germany_north.poly -d=/home/osmuser/input/lastchange_germany_north.txt %s %s'
-    command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
+    command = './mapsplit -v -t -b=0.1 -c -f=%d -s=100000000,20000000,450000  -p=/scratch/peda/germany_north.poly -d=/scratch/peda/input/lastchange_germany_north.txt %s %s'
+    command = command % (NR_FILES, dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
     print ('Splitting north germany into tiles via:\n' + command)
     os.system(command)
 
@@ -250,8 +251,8 @@ def getSwitzerlandData():
     
     dir = os.getcwd()
     os.chdir(MAPSPLIT);
-    command = './mapsplit -v -t -b=0.1 -c -f=2048 -p=/home/osmuser/switzerland.poly -d=/home/osmuser/input/lastchange_switzerland.txt %s %s'
-    command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
+    command = './mapsplit -v -t -b=0.1 -c -f=%d -p=/scratch/peda/switzerland.poly -d=/scratch/peda/input/lastchange_switzerland.txt %s %s'
+    command = command % (NR_FILES, dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
     print ('Splitting switzerland into tiles via:\n' + command)
     os.system(command)
 
@@ -279,8 +280,8 @@ def getAustriaData():
     
     dir = os.getcwd()
     os.chdir(MAPSPLIT);
-    command = './mapsplit -v -t -b=0.1 -c -f=2048 -p=/home/osmuser/austria.poly -d=/home/osmuser/input/lastchange_austria.txt %s %s'
-    command = command % (dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
+    command = './mapsplit -v -t -b=0.1 -c -f=%d -p=/scratch/peda/austria.poly -d=/scratch/peda/input/lastchange_austria.txt %s %s'
+    command = command % (NR_FILES, dir + '/' + osmdump, TILE_OUTPUT + '/dl/tiles_z13_');
     print ('Splitting austria into tiles via:\n' + command)
     os.system(command)
 
