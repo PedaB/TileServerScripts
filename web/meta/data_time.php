@@ -1,4 +1,4 @@
-<?
+<?php
 
 $file = "../../input/tiles/dl/germany.osm.pbf";
 

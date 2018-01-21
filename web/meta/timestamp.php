@@ -1,4 +1,4 @@
-<?
+<?php
 
 $base = "../tiles/" . $_GET["dir"] . "/";
 

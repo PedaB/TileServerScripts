@@ -1,4 +1,4 @@
-<?
+<?php
  $x = $_GET["x"]; $y = $_GET["y"]; $z = 13;
  $mode = $_GET["mode"];
 
@@ -23,19 +23,19 @@
     <tr>
 	<td></td>
 	<td class="nav_cell"><center>
-		<a href=".?<? if ($mode=='xxx') { echo 'mode=xxx&'; } ?>x=<?=$x?>&y=<?=$y-1?>" style="display:block;">▲</a>
+		<a href=".?<?php if ($mode=='xxx') { echo 'mode=xxx&'; } ?>x=<?=$x?>&y=<?=$y-1?>" style="display:block;">▲</a>
 	</center></td>
 	<td></td>
     </tr>
     <tr>
-	<td class="nav_cell"><a href=".?<? if ($mode=='xxx') { echo 'mode=xxx&'; } ?>x=<?=$x-1?>&y=<?=$y?>" style="display:block; height:100%">◀</a></td>
+	<td class="nav_cell"><a href=".?<?php if ($mode=='xxx') { echo 'mode=xxx&'; } ?>x=<?=$x-1?>&y=<?=$y?>" style="display:block; height:100%">◀</a></td>
 	<td><img src="http://tiles.osm2world.org/osm/tiles/n/<?=$z?>/<?=$x?>/<?=$y?>.png"/></td>
-	<td class="nav_cell"><a href=".?<? if ($mode=='xxx') { echo 'mode=xxx&'; } ?>x=<?=$x+1?>&y=<?=$y?>" style="display:block; height:100%">▶</a></td>
+	<td class="nav_cell"><a href=".?<?php if ($mode=='xxx') { echo 'mode=xxx&'; } ?>x=<?=$x+1?>&y=<?=$y?>" style="display:block; height:100%">▶</a></td>
     </tr>
     <tr>
 	<td></td>
 	<td class="nav_cell"><center>
-		<a href=".?<? if ($mode=='xxx') { echo 'mode=xxx&'; } ?>x=<?=$x?>&y=<?=$y+1?>" style="display:block;">▼</a>
+		<a href=".?<?php if ($mode=='xxx') { echo 'mode=xxx&'; } ?>x=<?=$x?>&y=<?=$y+1?>" style="display:block;">▼</a>
 	</center></td>
 	<td></td>
     </tr>
@@ -90,7 +90,7 @@ if (file_exists($pbffile)) { $tiledata .= '<a href="'.$pbffile.'">pbf file</a>';
 
 </div>
 
-<?
+<?php
 if ($mode == "xxx") {
 
 	echo ('<div id="controls">');
